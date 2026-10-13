@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connected Vehicle Security · 车联网安全知识库</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #15202b;
+      --ink-soft: #3a4756;
+      --muted: #6a7685;
+      --line: #d7dee8;
+      --paper: #eef2f6;
+      --card: #ffffff;
+      --accent: #c45c26;
+      --accent-deep: #9a3f12;
+      --teal: #0f6e6a;
+      --teal-soft: #e6f4f3;
+      --warn-soft: #fff4e8;
+      --bad-soft: #fdecef;
+      --ok-soft: #e8f7ee;
+      --shadow: 0 14px 40px rgba(21, 32, 43, 0.08);
+      --radius: 14px;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --display: "Source Serif 4", Georgia, serif;
+      --sidebar: 260px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font);
+      line-height: 1.65;
+      background:
+        radial-gradient(800px 360px at 0% 0%, rgba(196, 92, 38, 0.12), transparent 55%),
+        radial-gradient(700px 320px at 100% 0%, rgba(15, 110, 106, 0.10), transparent 50%),
+        var(--paper);
+    }
+    a { color: var(--accent-deep); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    .side {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      padding: 1.4rem 1rem 2rem;
+    }
+    .brand {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 1.2rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+    }
+    .brand-en {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+    }
+    .nav a {
+      display: block;
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+      font-weight: 550;
+      text-decoration: none;
+      margin-bottom: 0.15rem;
+    }
+    .nav a:hover { background: var(--warn-soft); color: var(--accent-deep); text-decoration: none; }
+    .nav .group {
+      margin: 0.9rem 0 0.35rem;
+      padding: 0 0.65rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .side-foot {
+      margin-top: 1.4rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .main { padding: 2rem clamp(1.2rem, 3vw, 2.5rem) 3.5rem; max-width: 980px; }
+    .hero {
+      padding: 1.8rem 1.8rem 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 2px);
+      background: linear-gradient(145deg, #fff, #fff8f2);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .hero p { margin: 0.85rem 0 0; color: var(--ink-soft); max-width: 46rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    .chip {
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    section {
+      margin: 0 0 1.2rem;
+      padding: 1.35rem 1.45rem 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    section h2 {
+      margin: 0 0 0.75rem;
+      font-family: var(--display);
+      font-size: 1.3rem;
+      letter-spacing: -0.015em;
+    }
+    section h3 { margin: 1.15rem 0 0.45rem; font-size: 1.02rem; }
+    p, li { color: var(--ink-soft); }
+    ul, ol { padding-left: 1.2rem; }
+    li { margin: 0.3rem 0; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 0.85rem;
+    }
+    .card {
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfcfe;
+    }
+    .card h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+    .card.attack { border-top: 3px solid var(--accent); }
+    .card.defend { border-top: 3px solid var(--teal); background: var(--teal-soft); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f3f6fa;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td { border-bottom: 0; }
+
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0.75rem 0 0; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding: 0.75rem 0.95rem 0.75rem 3.25rem;
+      margin: 0.4rem 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      line-height: 1.65;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0.85rem;
+      top: 0.82rem;
+      width: 1.7rem;
+      height: 1.7rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .steps li strong {
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .note {
+      margin-top: 0.9rem;
+      padding: 0.8rem 0.95rem;
+      border-left: 3px solid var(--teal);
+      background: var(--teal-soft);
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+    .note.warn { border-left-color: var(--accent); background: var(--warn-soft); }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.55rem;
+      margin-top: 0.8rem;
+    }
+    .map span {
+      display: block;
+      padding: 0.75rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .side { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">车联网安全知识库</div>
+      <div class="brand-en">Connected Vehicle Security</div>
+      <nav class="nav">
+        <div class="group">导读</div>
+        <a href="#intro">这是什么</a>
+        <a href="#landscape">攻击面地图</a>
+        <div class="group">漏洞挖掘</div>
+        <a href="#pentest">整车渗透流程</a>
+        <a href="#box">灰盒 / 黑盒打法</a>
+        <a href="#firmware">固件与硬件</a>
+        <a href="#protocol">诊断 / OTA / 总线</a>
+        <a href="#protocol-stack">协议栈深入分析</a>
+        <a href="#vuln-types">常见漏洞类型</a>
+        <div class="group">防御</div>
+        <a href="#defense">防御体系拆解</a>
+        <a href="#matrix">挖洞 ↔ 防御对照</a>
+        <div class="group">附录</div>
+        <a href="#glossary">术语速查</a>
+        <a href="#path">学习路径</a>
+        <a href="#sources">原文索引</a>
+      </nav>
+      <div class="side-foot">
+        主题整理自
+        <a href="https://delikely.eu.org/" target="_blank" rel="noopener">Delikely's Blog</a>
+        · 二次整合，便于本地学习
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="hero" id="intro">
+        <h1>把车联网安全「拆开看」</h1>
+        <p>
+          本库把 <a href="https://delikely.eu.org/" target="_blank" rel="noopener">delikely.eu.org</a>
+          上散落的车联网 / 固件 / IoT 实践文章，重组成一条可读路径：
+          <strong>先看攻击面 → 再学怎么挖 → 最后对照怎么防</strong>。
+          适合安全测试、固件分析与主机厂/供应商安全工程入门。
+        </p>
+        <div class="chips">
+          <span class="chip">TBOX / 车机 / ECU</span>
+          <span class="chip">固件提取</span>
+          <span class="chip">UDS / OTA</span>
+          <span class="chip">协议栈</span>
+          <span class="chip">整车渗透</span>
+          <span class="chip">防御加固</span>
+        </div>
+      </header>
+
+      <section id="landscape">
+        <h2>1. 攻击面地图（先建立全局）</h2>
+        <p>智能网联汽车不是「一台手机 + 四个轮子」，而是多层系统叠加。挖洞前先认清入口：</p>
+        <div class="map">
+          <span>云端 / TSP / OTA</span>
+          <span>手机 App</span>
+          <span>TBOX / OCU</span>
+          <span>车机 IVI</span>
+          <span>诊断 OBD/UDS</span>
+          <span>充电桩 / EVSE</span>
+          <span>Wi-Fi / BT / 蜂窝</span>
+          <span>CAN / Eth 总线</span>
+          <span>USB / 外设</span>
+          <span>ECU 固件 / MCU</span>
+        </div>
+        <h3>用一句话理解各层</h3>
+        <ul>
+          <li><strong>云与 App</strong>：远程控车、账号、OTA 分发——常见 Web/API/业务逻辑洞。</li>
+          <li><strong>TBOX（车载通信单元）</strong>：蜂窝上网、定位、与 TSP 通信的「车外网关」，权限高、影响面大。</li>
+          <li><strong>车机</strong>：Android/QNX 等，多媒体与人机交互；USB、应用安装、ADB 常是突破口。</li>
+          <li><strong>诊断与刷写</strong>：UDS/OBD 可读写 ECU；Seed-Key 与刷写链是经典战场。</li>
+          <li><strong>总线</strong>：拿到一域权限后，可能横向到其他 ECU。</li>
+        </ul>
+        <div class="note">
+          博客中对大众 OCU/TBOX、充电桩、整车渗透等的拆解，本质都是在这些面上「找入口 → 提权 → 影响车辆或数据」。
+        </div>
+      </section>
+
+      <section id="pentest">
+        <h2>2. 漏洞挖掘：整车渗透怎么做</h2>
+        <p>
+          参考
+          <a href="https://delikely.eu.org/2023/10/10/pentest-workflow-for-automotive/" target="_blank" rel="noopener">整车渗透测试实践</a>
+          ，把流程压缩成「可执行的 10 步」：
+        </p>
+        <ol class="steps">
+          <li><strong>前期沟通</strong>：测零部件还是整车？有无台架？能否拆硬件？开发版还是量产？目标是合规报告还是深挖漏洞。</li>
+          <li><strong>前期情报</strong>：平台共用模块多，可用 OSINT 找企标、算法库、DID、车友玩法（任意安装等）。</li>
+          <li><strong>环境验收</strong>：版本是否完整、网络能否上、App 是否绑车——环境坑会吃掉大量工时。</li>
+          <li><strong>信息收集</strong>：芯片、丝印、调试口、开放端口、进程、OTA 业务流；用表 + 架构图共享。</li>
+          <li><strong>威胁建模</strong>：资产 → 威胁场景 → 攻击路径 → 排优先级与时间盒。</li>
+          <li><strong>漏洞挖掘</strong>：静态（固件/二进制/配置）+ 动态（协议/业务/Fuzz）。</li>
+          <li><strong>漏洞验证</strong>：PoC、Nday、服务洞、业务洞分开验证，避免「看似能打其实不行」。</li>
+          <li><strong>后渗透</strong>：shell → 扫其他 ECU/服务 → 隧道 → 固件残留 → 拼攻击链与录屏。</li>
+          <li><strong>报告</strong>：合规清单 + 漏洞细节 + 过程证据。</li>
+          <li><strong>回归</strong>：补丁是否可绕过、是否修全。</li>
+        </ol>
+        <div class="note warn">
+          ISO 21434 / WP.29 R155 把渗透测试列为验证手段之一；实战里扫描、Fuzz 通常嵌在渗透流程中，而不是互相替代。
+        </div>
+      </section>
+
+      <section id="box">
+        <h2>2.1 灰盒 / 黑盒：攻击方式与逻辑（细拆）</h2>
+        <p>
+          据
+          <a href="https://delikely.eu.org/2023/10/10/pentest-workflow-for-automotive/" target="_blank" rel="noopener">整车渗透测试实践</a>
+          ：内部团队可黑/白/灰三法；<strong>外部项目多为黑盒</strong>，灰盒通常只有规范/架构的一小部分。
+          完整对照表见 <a href="knowledge/black-gray-box.md">knowledge/black-gray-box.md</a>。
+        </p>
+
+        <h3>三种盒子差在「信息」</h3>
+        <table>
+          <thead>
+            <tr><th>方法</th><th>手里有什么</th><th>核心打法</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>白盒</td>
+              <td>源码、二进制、完整设计文档</td>
+              <td>审计为主；主机厂也不一定拥有全部供应商源码</td>
+            </tr>
+            <tr>
+              <td>黑盒</td>
+              <td>几乎无内部资料</td>
+              <td>逆向补齐情报，再打。必拿三类：IPC/RPC、私有协议字段、OTA 分发方式</td>
+            </tr>
+            <tr>
+              <td>灰盒</td>
+              <td>算法 / 架构 / 数据结构；外部多为安全设计规范</td>
+              <td>按文档建用例 → 动态验证「文档 vs 实现」差异</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>黑盒逻辑：把黑盒「变成自己的灰盒」</h3>
+        <ol class="steps">
+          <li><strong>找入口</strong>：USB / OBD / 无线 / App / 公网桩 / 调试口等外部可见面。</li>
+          <li><strong>补情报</strong>：OSINT（模块化平台复用、企标、27 算法、DID、车友玩法）+ 硬件拆解 + 固件提取 + 抓包。</li>
+          <li><strong>建模型</strong>：服务拓扑、协议字段、信任边界；逆向 IPC、私有协议、OTA 链。</li>
+          <li><strong>钻半开缝</strong>：能 push 不能 shell、挂载可穿越、弱 Seed-Key、未授权升级 API…</li>
+          <li><strong>后渗透</strong>：扫 ECU、隧道、固件残留、拼攻击链取证。</li>
+        </ol>
+
+        <h3>黑盒：按面拆的攻击逻辑</h3>
+        <div class="grid-2">
+          <div class="card attack">
+            <h4>硬件 / 固件</h4>
+            <p>SOP Flash 测夹、MCU SWD 夹脚、ECU Bench/BDM/Boot/OBD、大映像分区挂载 → 静态挖密钥、算法、下载地址、CVE。</p>
+          </div>
+          <div class="card attack">
+            <h4>TBOX / OCU</h4>
+            <p>蜂窝降级、Wi-Fi 弱密、APN 进内网、总线横移、OTA 截包/验签、调试口、弱口令服务、全 root。</p>
+          </div>
+          <div class="card attack">
+            <h4>ADB「半授权」</h4>
+            <p>shell 要密码但 push/pull 可用 → 写 hotplug/uevent_helper → 触发 uevent → 高权限服务。详见 Tesla TCU 复现文。</p>
+          </div>
+          <div class="card attack">
+            <h4>车机 U 盘</h4>
+            <p>udev 用 LABEL 拼挂载点且未过滤 <code>../</code> → 穿越劫持系统路径 → 挂载后调用被劫持命令。</p>
+          </div>
+          <div class="card attack">
+            <h4>UDS / 刷写</h4>
+            <p>逆向 Seed2Key、默认常量、弱/固定种子、Reset 绕延时、34/36 无认证、CAN 旁听明文固件、应用层绕过诊断认证。</p>
+          </div>
+          <div class="card attack">
+            <h4>OTA</h4>
+            <p>平台洞 / 测试包 / 明文 / 逆向地址拿包 → 验签绕过或反推他 ECU 升级链；策略缺陷可致可用性事故。</p>
+          </div>
+          <div class="card attack">
+            <h4>充电桩</h4>
+            <p>选「公网 + 固件可得」→ 硬编码、未授权后台、升级命令注入、免费充电 API；控制器供应链影响多品牌。</p>
+          </div>
+          <div class="card attack">
+            <h4>业务 / 合规</h4>
+            <p>对照 TBOX 业务（远程控车、eCall、监管上报）做滥用；TBOX 抓包查境外 IP（跨境条款）。</p>
+          </div>
+        </div>
+
+        <h3>灰盒逻辑：文档怎么变成用例</h3>
+        <ul>
+          <li><strong>文档驱动</strong>：规范写「应验签 / 应关 ADB」→ 列验证用例直接打勾或打叉。</li>
+          <li><strong>差异驱动</strong>：文档有签名、实现找不到验签路径 → 优先深挖。</li>
+          <li><strong>算法已知</strong>：不必从零逆向 27，专注种子随机性、失败锁定、会话绑定、Reset 旁路。</li>
+          <li><strong>架构已知</strong>：按 EE/域图排横向优先级，而不是全车盲扫。</li>
+          <li><strong>仍要黑盒手段</strong>：文档会过时、供应商会偏离；灰盒缩小搜索空间，黑盒验证与补洞。</li>
+        </ul>
+
+        <h3>同一目标：黑盒 vs 灰盒两条路</h3>
+        <table>
+          <thead>
+            <tr><th>目标</th><th>黑盒路径</th><th>灰盒路径</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>破 27</td>
+              <td>提固件 → 逆向算法/常量</td>
+              <td>按算法文档实现 → 测随机性与锁定</td>
+            </tr>
+            <tr>
+              <td>打 OTA</td>
+              <td>截流量 / 逆向客户端</td>
+              <td>按设计构造乱序、非法包、降级</td>
+            </tr>
+            <tr>
+              <td>拿 TBOX shell</td>
+              <td>服务扫描、ADB 半开、硬件口</td>
+              <td>对照调试/账号基线逐项验</td>
+            </tr>
+            <tr>
+              <td>车机提权</td>
+              <td>U 盘/USB/任意安装链</td>
+              <td>对照外设与签名安装策略</td>
+            </tr>
+            <tr>
+              <td>横移 ECU</td>
+              <td>落点后扫总线与服务</td>
+              <td>按架构图选高价值域与网关</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>五条常见攻击链（模板）</h3>
+        <ol class="steps">
+          <li><strong>外设 → 车机 → 域内</strong>：挂载/USB 策略缺陷 → shell → 邻接 ECU / 隧道。</li>
+          <li><strong>调试半开 → 通信单元</strong>：ADB/串口缝 → TBOX 高权限 → OTA / APN / CAN。</li>
+          <li><strong>固件 → 诊断 → 刷写</strong>：提固件得算法 → 弱 27 → 非法刷写或旁听明文包。</li>
+          <li><strong>公网桩 → 供应链</strong>：暴露面 + 固件 → 控制器级洞影响多品牌。</li>
+          <li><strong>业务合规</strong>：功能全开抓包 → 出境 IP / 敏感数据路径。</li>
+        </ol>
+
+        <div class="note">
+          以上为授权测试方法论摘要，不提供可直接套用的利用脚本。
+          原文入口：
+          <a href="https://delikely.eu.org/2025/12/27/Tesla-TCU-ADB-Bypass-Reproduction/" target="_blank" rel="noopener">ADB 复现</a> ·
+          <a href="https://delikely.eu.org/2021/06/04/U%E7%9B%98%E7%9B%AE%E5%BD%95%E7%A9%BF%E8%B6%8A%E8%8E%B7%E5%8F%96%E8%BD%A6%E6%9C%BASHELL/" target="_blank" rel="noopener">U 盘穿越</a> ·
+          <a href="https://delikely.eu.org/2023/05/01/UDS-flash/" target="_blank" rel="noopener">UDS</a> ·
+          <a href="https://delikely.eu.org/2022/04/29/chargebox-vuln-hunter-garo-and-bender/" target="_blank" rel="noopener">充电桩</a> ·
+          <a href="https://delikely.eu.org/2021/09/29/VW-OCU/" target="_blank" rel="noopener">OCU</a>
+        </div>
+      </section>
+
+      <section id="firmware">
+        <h2>3. 固件与硬件：挖洞的「弹药库」</h2>
+        <p>没有固件，很多漏洞只能停在猜测。博客反复强调的路径：</p>
+        <h3>3.1 怎么拿到固件</h3>
+        <ul>
+          <li><strong>免拆读 Flash</strong>：SOP 封装 SPI Flash 用测夹 + 编程器读取（汽车场景常用）。</li>
+          <li><strong>MCU 内置 Flash</strong>：SWD/JTAG 调试口；口被隐藏时尝试夹针脚；读保护未开会大幅降低门槛。</li>
+          <li><strong>诊断/刷写工具</strong>：动力域常用 KTAG/KESS 等（需合法授权场景）；OBD 读写与解锁流程。</li>
+          <li><strong>OTA / 升级包</strong>：平台漏洞、测试包泄露、明文传输、逆向下载地址。</li>
+          <li><strong>磁盘镜像</strong>：如 Tesla 车机，从映像中抠出文件系统再分析。</li>
+        </ul>
+        <h3>3.2 拿到固件后挖什么</h3>
+        <ul>
+          <li>硬编码密钥、证书、Seed-Key 常量、云端 URL</li>
+          <li>危险函数 / 命令拼接 / 缓冲区问题</li>
+          <li>开放服务配置、默认口令、过时组件 CVE</li>
+          <li>升级验签逻辑是否可跳过</li>
+          <li>与其他模块的信任关系（是否盲目信任总线消息）</li>
+        </ul>
+        <div class="note">
+          硬件入口本身也是洞：未保护的串口、ADB、USB、JTAG，往往比「0day」更快拿到第一落点。
+        </div>
+      </section>
+
+      <section id="protocol">
+        <h2>4. 诊断、刷写与 OTA（协议向挖洞）</h2>
+        <h3>4.1 UDS 刷写（高频考点）</h3>
+        <p>
+          详见
+          <a href="https://delikely.eu.org/2023/05/01/UDS-flash/" target="_blank" rel="noopener">UDS 刷写</a>
+          。测试时重点看：
+        </p>
+        <ul>
+          <li><strong>安全访问（0x27）</strong>：种子是否随机、算法是否可逆向、常量是否硬编码、能否故障注入绕过。</li>
+          <li><strong>请求下载 / 传输数据（0x34/0x36）</strong>：是否未认证就可刷；传输是否加密（CAN 可被嗅探）。</li>
+          <li><strong>刷写前置条件</strong>：车速、供电、档位等互锁是否可被欺骗。</li>
+          <li><strong>格式</strong>：S19 / HEX / BIN / VBF 等，影响分析与篡改方式。</li>
+        </ul>
+        <h3>4.2 OTA 业务链</h3>
+        <ul>
+          <li>云端平台漏洞 → 包泄露 / 非法推送</li>
+          <li>车端验签绕过 → 刷入恶意固件</li>
+          <li>策略不合理 → 升级过程影响可用性与安全（停车无法下车等极端案例需纳入风险意识）</li>
+        </ul>
+        <h3>4.3 无线与外设</h3>
+        <ul>
+          <li>蜂窝降级、GNSS 欺骗、Wi-Fi/BT 协议栈</li>
+          <li>USB 目录穿越到 shell（车机经典路径）</li>
+          <li>充电桩：外网暴露 + 工控/支付/控制逻辑交叉</li>
+        </ul>
+      </section>
+
+      <section id="protocol-stack">
+        <h2>4.5 协议栈深入分析思路</h2>
+        <p>
+          完整细拆见
+          <a href="knowledge/protocol-stack.md">knowledge/protocol-stack.md</a>
+          。核心口诀：<strong>先拓扑，再字典，后字段</strong>。
+        </p>
+        <ol class="steps">
+          <li><strong>定接入点</strong>：端子 / OBD / 车机网卡 / TBOX 无线。</li>
+          <li><strong>画域与网关</strong>：Diag、TBUS、底盘、车身、信息、能量等谁同域、谁转发。</li>
+          <li><strong>收协议字典</strong>：DBC / LDF / ODX / ARXML / 企标 / 固件字符串。</li>
+          <li><strong>分层还原</strong>：总线帧 → ISO-TP/DoIP → UDS/SOME/IP/私有 RPC → 业务指令。</li>
+          <li><strong>负向用例</strong>：跳步、重放、越权 DID、畸形长度、错误来源；静动对照找实现差异。</li>
+        </ol>
+        <div class="grid-2">
+          <div class="card">
+            <h4>车内</h4>
+            <p>CAN/LIN 信号信任；UDS 27→34/36 状态机；DoIP 路由激活；SOME/IP 服务发现与鉴权。</p>
+          </div>
+          <div class="card">
+            <h4>车外</h4>
+            <p>TBOX↔云私有协议、OTA 分发与验签、App/TSP API、充电桩管理面与车桩交叉。</p>
+          </div>
+        </div>
+        <div class="note">
+          黑盒必补三类情报中的「IPC/RPC」「私有协议字段」都落在这一层；有字典时优先差异分析（文档有线上无 / 线上有文档无）。
+        </div>
+      </section>
+
+      <section id="vuln-types">
+        <h2>5. 车联网常见漏洞类型（细数）</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>类型</th>
+              <th>表现</th>
+              <th>常见落点</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>认证绕过</td>
+              <td>ADB/登录/接口无需有效凭证</td>
+              <td>车机、TBOX、云 API、充电桩 Web</td>
+            </tr>
+            <tr>
+              <td>弱口令 / 默认口令</td>
+              <td>SSH/Telnet/后台可进</td>
+              <td>TBOX、摄像头、路由器类组件</td>
+            </tr>
+            <tr>
+              <td>命令注入 / 内存破坏</td>
+              <td>可控输入进 system/溢出</td>
+              <td>CGI、诊断代理、升级脚本</td>
+            </tr>
+            <tr>
+              <td>路径穿越</td>
+              <td>USB/文件接口写到系统路径</td>
+              <td>车机媒体/升级目录</td>
+            </tr>
+            <tr>
+              <td>不安全刷写</td>
+              <td>无认证、弱 Seed-Key、明文包</td>
+              <td>UDS、售后工具、OTA</td>
+            </tr>
+            <tr>
+              <td>供应链 / 组件洞</td>
+              <td>已知 CVE 未修</td>
+              <td>Dnsmasq 等开源组件、第三方 SDK</td>
+            </tr>
+            <tr>
+              <td>权限模型缺陷</td>
+              <td>全 root、域间无隔离</td>
+              <td>Linux/Android/QNX 服务</td>
+            </tr>
+            <tr>
+              <td>敏感数据泄露</td>
+              <td>密钥、日志、跨境传输</td>
+              <td>固件、云同步、日志通道</td>
+            </tr>
+            <tr>
+              <td>总线信任滥用</td>
+              <td>伪造报文驱动执行器</td>
+              <td>CAN/车载以太（需先有入口）</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="defense">
+        <h2>6. 防御知识点拆解</h2>
+        <p>防御不是「上一套防火墙就结束」，而是与攻击面一一咬合：</p>
+        <div class="grid-2">
+          <div class="card defend">
+            <h4>安全启动与信任链</h4>
+            <p>Boot → 系统 → App/固件包层层验签。即使刷写认证被破，被篡改镜像也应拒绝启动。</p>
+          </div>
+          <div class="card defend">
+            <h4>调试与量产差异</h4>
+            <p>量产关闭 ADB/JTAG/串口或加认证；读保护与熔丝策略按阶段切换。</p>
+          </div>
+          <div class="card defend">
+            <h4>诊断与刷写加固</h4>
+            <p>真随机种子、失败锁定、敏感服务强制安全访问；优先非对称方案；密钥放安全存储/HSM。</p>
+          </div>
+          <div class="card defend">
+            <h4>通信与 OTA</h4>
+            <p>加密+完整下载；平台最小暴露；升级互锁与可用性策略；异常监测与回滚。</p>
+          </div>
+          <div class="card defend">
+            <h4>系统硬化</h4>
+            <p>非 root 运行、沙箱、组件补丁基线、关闭明文管理口、私有协议加密。</p>
+          </div>
+          <div class="card defend">
+            <h4>组织与流程</h4>
+            <p>威胁建模进开发流程；渗透+回归；漏洞定级（如 GB/T 相关实践）；供应商安全要求进合同。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <h2>7. 挖洞 ↔ 防御对照（精简表）</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>你挖到什么</th>
+              <th>对方该怎么防</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>调试口直通 shell</td>
+              <td>量产关闭/认证；物理不可达</td>
+            </tr>
+            <tr>
+              <td>Flash 一夹就出固件</td>
+              <td>读保护 + 密文关键数据</td>
+            </tr>
+            <tr>
+              <td>Seed-Key 可算 / 固定种子</td>
+              <td>真随机 + 抗逆向 + 锁定策略</td>
+            </tr>
+            <tr>
+              <td>未认证 34/36 刷写</td>
+              <td>强制安全访问与互锁</td>
+            </tr>
+            <tr>
+              <td>OTA 包可伪造</td>
+              <td>安全启动 + 不可跳过验签</td>
+            </tr>
+            <tr>
+              <td>USB 穿越提权</td>
+              <td>路径规范化 + 签名应用白名单</td>
+            </tr>
+            <tr>
+              <td>弱口令远程管理</td>
+              <td>禁用/证书认证 + 监控</td>
+            </tr>
+            <tr>
+              <td>拿到车机后横移 ECU</td>
+              <td>网关策略、域隔离、报文过滤</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>更完整的 Markdown 清单见：<a href="knowledge/checklist.md">knowledge/checklist.md</a></p>
+      </section>
+
+      <section id="glossary">
+        <h2>8. 术语速查（黑话入门）</h2>
+        <table>
+          <thead>
+            <tr><th>词</th><th>人话</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ECU</td><td>车上某块电子控制单元（发动机、车身、网关…）</td></tr>
+            <tr><td>TBOX / OCU</td><td>车载通信盒子，连蜂窝网、和云通信</td></tr>
+            <tr><td>IVI / 车机</td><td>中控娱乐与人机交互系统</td></tr>
+            <tr><td>TSP</td><td>车联网服务平台（云端）</td></tr>
+            <tr><td>OTA</td><td>远程升级</td></tr>
+            <tr><td>UDS</td><td>统一诊断服务，刷写/读故障常用</td></tr>
+            <tr><td>DoIP</td><td>诊断通信跑在 IP/车载以太上</td></tr>
+            <tr><td>SOME/IP</td><td>车载以太上的服务发现与 RPC</td></tr>
+            <tr><td>DBC / ODX</td><td>CAN 信号字典 / 诊断描述文件</td></tr>
+            <tr><td>Seed-Key</td><td>诊断安全访问挑战应答</td></tr>
+            <tr><td>SOP</td><td>开始量产；也指一种芯片封装（上下文区分）</td></tr>
+            <tr><td>CAN</td><td>车内常见总线</td></tr>
+            <tr><td>HSM</td><td>硬件安全模块，存密钥/做密码运算</td></tr>
+            <tr><td>R155 / 21434</td><td>车辆网联安全法规与工程标准语境中的高频编号</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="path">
+        <h2>9. 建议学习路径</h2>
+        <ol class="steps">
+          <li>建立地图：EE 架构、模块化平台、TBOX/车机分工（先读博客「基础知识」系列）。</li>
+          <li>学会拿固件：免拆 Flash / MCU / 镜像提取，再做文件系统与字符串巡检。</li>
+          <li>协议分层：端子拓扑 → DBC/ODX 字典 → UDS/DoIP/SOME/IP（见 <a href="knowledge/protocol-stack.md">protocol-stack.md</a>）。</li>
+          <li>跟一条完整渗透：按整车渗透 10 步走通一个台架或零部件。</li>
+          <li>专攻一条链：UDS 刷写 或 OTA 或 USB/车机提权，挖深到可复现。</li>
+          <li>反过来写防御：每发现一类洞，补一条设计/测试要求进检查表。</li>
+        </ol>
+      </section>
+
+      <section id="sources">
+        <h2>10. 原文索引与声明</h2>
+        <p>
+          完整文章列表见
+          <a href="https://delikely.eu.org/" target="_blank" rel="noopener">https://delikely.eu.org/</a>
+          ；本库映射表：
+          <a href="knowledge/map.md">knowledge/map.md</a>。
+        </p>
+        <ul>
+          <li><a href="https://delikely.eu.org/2023/10/10/pentest-workflow-for-automotive/" target="_blank" rel="noopener">整车渗透测试实践</a></li>
+          <li><a href="https://delikely.eu.org/2023/05/01/UDS-flash/" target="_blank" rel="noopener">UDS 刷写</a></li>
+          <li><a href="https://delikely.eu.org/2021/11/18/Vehicle-Cable-Connection-Terminal/" target="_blank" rel="noopener">插线端子与网络结构</a></li>
+          <li><a href="https://delikely.eu.org/2024/11/15/automotive-DB-file-set/" target="_blank" rel="noopener">汽车数据库文件</a></li>
+          <li><a href="https://delikely.eu.org/2021/09/29/VW-OCU/" target="_blank" rel="noopener">大众 J949 OCU/TBOX</a></li>
+          <li><a href="https://delikely.eu.org/2021/01/30/" target="_blank" rel="noopener">免拆提取固件在汽车中的应用</a></li>
+          <li><a href="https://delikely.eu.org/2022/04/29/" target="_blank" rel="noopener">充电桩漏洞挖掘实践</a></li>
+          <li><a href="https://delikely.eu.org/2021/06/04/" target="_blank" rel="noopener">U盘目录穿越获取车机 SHELL</a></li>
+        </ul>
+        <div class="note warn">
+          本页为学习向摘要与重组，不替代原文，也不构成对任何实车未授权测试的建议。实车/零部件测试须获得书面授权。
+        </div>
+      </section>
+
+      <footer>
+        目录名：<code>connected-vehicle-security/</code>（Connected Vehicle Security）·
+        打开本文件即可离线浏览
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
